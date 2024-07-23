@@ -1,0 +1,91 @@
+Used Assets Licenses and Credit:
+
+1-step1.wav, step2.wav, step3.wav
+-Creator: Ebraheem Mustafa
+-Licensing: Creative Commons Zero v1.0 Universal (public domain)
+
+2-Laser.wav
+-Creator: Ebraheem Mustafa
+-Licensing: Creative Commons Zero v1.0 Universal (public domain)
+
+3-IngameSong.ogg
+-Creator: Ebraheem Mustafa
+-Licensing: Allowed for distribution/modification/sampling.
+-Transparancy: It has loops that are provided by FLEX Plugin from FL Studio 20+
+
+4-Tiled.cs 
+-Creator: Kevin Gadd
+Modified By: Stephen Belanger, Zach Musgrave, Nathan Bean, Ebraheem Mustafa
+-Licensing: See file for details.
+
+5-MenuWood.png
+-Creator: Narik/NarikTheArtist
+-Modified By Ebraheem Mustafa (It's been elongated horizontally to become shaped like a menu)
+-Licensing: Creative Commons Zero v1.0 Universal
+-Link: https://soulofkiran.itch.io/pixel-art-wooden-gui-v1
+
+6-WoodGUI.png
+-Creator: Narik/NarikTheArtist
+-Modified By Ebraheem Mustafa (Button and Text Manually Drawn)
+-Licensing: Creative Commons Zero v1.0 Universal
+-Link: https://soulofkiran.itch.io/pixel-art-wooden-gui-v1
+
+7-ninja.png
+-Creator: Penusbmic
+-Modification: extrapolated 7th new frame for standing still.
+-Licensing: Allowed for commercial use and modification.
+-Link:  https://penusbmic.itch.io/characterpack1
+
+8-enemy.png
+-Creator: Penusbmic
+-Modification: Splitted Frames, added extra frames, and modified to fit game.
+-Licensing: Allowed for commercial use and modification.
+-Link:  https://penusbmic.itch.io/characterpack1
+https://penusbmic.itch.io/sci-fi-character-pack-10
+
+9-ThaleahFat.ttf (font)
+-Creator: Rick Hoppmann
+-License: CC-BY 4.0 (free for commercial use, or any other purpose)
+-Link: https://tinyworlds.itch.io/free-pixel-font-thaleah
+
+10-game_background_2.png
+-Creator: https://craftpix.net/
+-Modified By Ebraheem Mustafa (Used Tiled Map Editor to make this background for intro)
+-Licensing: Allowed for commercial and personal projects, allowed for modification.
+			See Term 2.0 in https://craftpix.net/file-licenses/ for more detail.
+-Link: https://craftpix.net/freebies/free-cursed-land-top-down-pixel-art-tileset/
+
+11-Cursed_land.tmx and related tiles
+-Creator: https://craftpix.net/
+-Modified By Ebraheem Mustafa (Used Tiled Map Editor to edit and make the provided map)
+-Licensing: Allowed for commercial and personal projects, allowed for modification.
+			See Term 2.0 in https://craftpix.net/file-licenses/ for more detail.
+-Link: https://craftpix.net/freebies/free-cursed-land-top-down-pixel-art-tileset/
+
+12-detailanddepth.png
+-Creator: https://craftpix.net/
+-Modified By Ebraheem Mustafa (Used Tiled Map Editor to edit the tiles and make png file to add detail and layering depth)
+-Licensing: Allowed for commercial and personal projects, allowed for modification.
+			See Term 2.0 in https://craftpix.net/file-licenses/ for more detail.
+-Link: https://craftpix.net/freebies/free-cursed-land-top-down-pixel-art-tileset/
+
+
+13- tile2.png (simple tiles made to fill in original map)
+-Creator: https://craftpix.net/
+-Modified By Ebraheem Mustafa (actually fully made by me, 
+			but made to complete map made by craftpix, so credit to them just to be safe.)
+-Licensing: Allowed for commercial and personal projects, allowed for modification.
+			See Term 2.0 in https://craftpix.net/file-licenses/ for more detail.
+-Link: https://craftpix.net/freebies/free-cursed-land-top-down-pixel-art-tileset/
+
+14-spacebar.png
+-Creator: Ebraheem Mustafa
+-Licensing: Creative Commons Zero v1.0 Universal (public domain)
+
+15-RTButton.png
+-Creator: Ebraheem Mustafa
+-Licensing: Creative Commons Zero v1.0 Universal (public domain)
+
+
+
+
