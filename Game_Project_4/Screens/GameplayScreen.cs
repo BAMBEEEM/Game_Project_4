@@ -214,7 +214,7 @@ namespace Game_Project_4.Screens
                 else enemy.Color = Color.White;
 
 
-                if (enemy.AttackBounds.CollidesWith(_mainCharacter.CharacterBounds) && enemy.Damaging)
+                if (enemy.AttackBounds.CollidesWith(_mainCharacter.CharacterBounds) && enemy.Damaging && !_mainCharacter.Dead)
                 {
                     _mainCharacter.Health -= enemy.AttackDamage;
                     _mainCharacter.Color = Color.Red;

@@ -295,9 +295,9 @@ namespace Game_Project_4.Sprites
 
 
                 }
-                else if (Math.Sign(gamePadState.ThumbSticks.Left.X) >0)
+/*                else if (Math.Sign(gamePadState.ThumbSticks.Left.X) >0)
                     flipped = false;
-                else flipped = true;
+                else flipped = true;*/
             }
             /*            else
                         {
