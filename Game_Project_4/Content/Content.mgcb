@@ -80,6 +80,12 @@
 /processorParam:TextureFormat=Color
 /build:enemy.png
 
+#begin example2.tmap
+/importer:BasicTilemapImporter
+/processor:BasicTilemapProcessor
+/processorParam:Scale=1
+/build:example2.tmap
+
 #begin game_background_2.png
 /importer:TextureImporter
 /processor:TextureProcessor
