@@ -57,6 +57,7 @@ namespace Game_Project_4.Background
 
             foreach (string line in DBModel.Scores)
             {
+                if (line != null)
                 spriteBatch.DrawString(_smallFont, line, new Vector2(320 , 207 + (lineNumber * 49)), Color.White);
                 lineNumber++;
             }
