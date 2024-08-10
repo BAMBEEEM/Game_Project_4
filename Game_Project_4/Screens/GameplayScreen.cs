@@ -49,6 +49,8 @@ namespace Game_Project_4.Screens
         private CharacterSprite _mainCharacter;
         private SpriteFont spriteFont;
         private Enemy[] _enemy = new Enemy[18];
+        private AlienEnemy _alienEnemy = new AlienEnemy(1, 0);
+        private FinalBoss _finalBoss = new FinalBoss(1, 0);
 
 
         private bool _won = false;
@@ -112,12 +114,19 @@ namespace Game_Project_4.Screens
 
             _mainCharacter.LoadContent(_content);
 
+            _alienEnemy.LoadContent(_content);
+
+            _finalBoss.LoadContent(_content);
+
             for (int i = 0; i < 18; i++)
             {
                 _enemy[i] = new Enemy(RandomHelper.Next(1, 3), i * 2.45f);
                 _enemy[i].LoadContent(_content);
                 _enemy[i].Player = _mainCharacter;
             }
+
+            _alienEnemy.Player = _mainCharacter;
+            _finalBoss.Player = _mainCharacter;
 
 
             _mainCharacter.MaxOffsetX = (ScreenManager.GraphicsDevice.Viewport.Width);
@@ -148,7 +157,7 @@ namespace Game_Project_4.Screens
 
 
 
-            MediaPlayer.Play(_ingameSong);
+            //MediaPlayer.Play(_ingameSong);
             MediaPlayer.IsRepeating = true;
         }
 
@@ -169,6 +178,8 @@ namespace Game_Project_4.Screens
         // stop updating when the pause menu is active, or if you tab away to a different application.
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
+            _alienEnemy.Update(gameTime);
+            _finalBoss.Update(gameTime);
             _startTimer -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
             _mainTimer += (float)gameTime.ElapsedGameTime.TotalSeconds;
             if (_startTimer > 18)
@@ -186,7 +197,7 @@ namespace Game_Project_4.Screens
             foreach (Enemy e in _enemy)
             {
                 if (e.RespawnTime < _mainTimer)
-                    e.Stopped = false;
+                    e.Stopped = true;
                 else e.Stopped = true;
 
                 if (e.Dead)
@@ -197,9 +208,24 @@ namespace Game_Project_4.Screens
 
             if (_mainCharacter.Dead)
                 _lost = true;
-                     // very good for testing: 
-                     // if (CollisionHelper.Collides(new BoundingRectangle(Mouse.GetState().Position.X, Mouse.GetState().Position.Y, 1, 1), enemy.AttackBounds))
+            // very good for testing: 
+/*            if (CollisionHelper.Collides(new BoundingRectangle(Mouse.GetState().Position.X, Mouse.GetState().Position.Y, 1, 1), _mainCharacter.WeaponBounds))
+                _mainCharacter.Color = Color.Red;
+            else _mainCharacter.Color = Color.White;*/
 
+            if (_mainCharacter.WeaponBounds.CollidesWith(_alienEnemy.CharacterBounds) && _mainCharacter.Damaging && !_alienEnemy.Dead)
+            {
+                _alienEnemy.Health -= _mainCharacter.AtackFirepower;
+                _alienEnemy.Color = Color.Red;
+            }
+            else _alienEnemy.Color = Color.White;
+
+
+            if (_alienEnemy.AttackBounds.CollidesWith(_mainCharacter.CharacterBounds) && _alienEnemy.Damaging && !_mainCharacter.Dead)
+            {
+                _mainCharacter.Health -= _alienEnemy.AttackDamage;
+                _mainCharacter.Color = Color.Red;
+            }
 
             float respawnTime = 0;
             foreach (Enemy enemy in _enemy)
@@ -368,6 +394,8 @@ namespace Game_Project_4.Screens
             _mainCharacter.Draw(gameTime, spriteBatch);
             foreach (Enemy enemy in _enemy)
                 enemy.Draw(gameTime, spriteBatch);
+/*            _alienEnemy.Draw(gameTime, spriteBatch);*/
+            _finalBoss.Draw(gameTime, spriteBatch);
             _backgroundDetails.Draw(spriteBatch);
             /*            _mainCharacter.Draw(gameTime, spriteBatch);
             */

@@ -77,6 +77,10 @@ namespace Game_Project_4.Sprites
 
         private bool _shooting = false;
 
+        private bool _facingUp = false;
+
+        private bool _facingDown = false;
+
         private bool _lastflipped = false;
 
         /*        private Vector2 _lossDirection = RandomHelper.NextDirection();
@@ -116,6 +120,12 @@ namespace Game_Project_4.Sprites
 
         public float AtackFirepower = 10;
 
+        private bool shootUp = false;
+        private bool shootDown = false;
+        private bool shootLeft = false;
+        private bool shootRight = false;
+
+
         /// <summary>
         /// The bounding volume of the sprite
         /// </summary>
@@ -132,6 +142,8 @@ namespace Game_Project_4.Sprites
         public Color Color { get; set; } = Color.White;
 
         public bool Damaging = false;
+
+        private bool shootingAgain = false;
 
         /// <summary>
         /// Loads the sprite texture using the provided ContentManager
@@ -155,8 +167,20 @@ namespace Game_Project_4.Sprites
         KeyboardState _previousKeyboardState;
         GamePadState _previousGamePadState;
 
-        float dashtime = 0;
+        float shootingTime = 0;
         private float _staminaChargeTimer = 0;
+
+        void FacingUp()
+        {
+            _facingUp = true;
+            _facingDown = false;
+        }
+
+        void FacingDown()
+        {
+            _facingDown = true;
+            _facingUp = false;
+        }
         public void Update(GameTime gameTime)
         {
 
@@ -167,8 +191,8 @@ namespace Game_Project_4.Sprites
             }
 
             float initSpeed = CurrentPosition.X; //debug
-/*            if (keyboardState.IsKeyDown(Keys.K))
-                Dead = true;*/
+            /*            if (keyboardState.IsKeyDown(Keys.K))
+                            Dead = true;*/
 
             if (WinManeuver == true)
             {
@@ -220,9 +244,9 @@ namespace Game_Project_4.Sprites
             float currentTime = (float)gameTime.TotalGameTime.TotalMilliseconds;
 
 
-            if (dashtime > 0)
-                dashtime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            else 
+            if (shootingTime > 0)
+                shootingTime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+            else
             {
                 _shooting = false;
 
@@ -230,11 +254,11 @@ namespace Game_Project_4.Sprites
             Rectangle source = new Rectangle(0, 0, 224, 160);
 
             // Check for double press of space within 500ms
-            if ((keyboardState.IsKeyDown(Keys.Space) && _previousKeyboardState.IsKeyUp(Keys.Space))
+            if ((keyboardState.IsKeyDown(Keys.B)) || (keyboardState.IsKeyDown(Keys.Left)) || (keyboardState.IsKeyDown(Keys.Right)) || (keyboardState.IsKeyDown(Keys.Up)) || (keyboardState.IsKeyDown(Keys.Down))
                 || (gamePadState.IsButtonDown(Buttons.RightTrigger) && _previousGamePadState.IsButtonUp(Buttons.RightTrigger)))
             {
                 _shooting = true;
-                dashtime = 450;
+                shootingTime = 450;
                 _lastflipped = flipped;
                 /*float timeSinceLastPress = currentTime - _lastSpacePressTime;
                                 if (timeSinceLastPress < 500 && Stamina >= DifficultySettings.StaminaUsePerDash && !Stopped)
@@ -270,7 +294,12 @@ namespace Game_Project_4.Sprites
 
 
 
-
+            void SwapWeaponBounds()
+            {
+                float temp = _weaponBounds.Width;
+                _weaponBounds.Width = _weaponBounds.Height;
+                _weaponBounds.Height = temp;
+            }
             #region GamePad Input
 
             if (!Stopped && !_softStopped)
@@ -295,9 +324,9 @@ namespace Game_Project_4.Sprites
 
 
                 }
-/*                else if (Math.Sign(gamePadState.ThumbSticks.Left.X) >0)
-                    flipped = false;
-                else flipped = true;*/
+                /*                else if (Math.Sign(gamePadState.ThumbSticks.Left.X) >0)
+                                    flipped = false;
+                                else flipped = true;*/
             }
             /*            else
                         {
@@ -307,52 +336,56 @@ namespace Game_Project_4.Sprites
 
             #region Keyboard Input
 
-            if (!Stopped && !_softStopped)
-            {
-                // Apply keyboard movement
-                if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W))
+            if (!Stopped)
+            {/* if (!(((_animationFrame >= 21 && _animationFrame <= 25)) || ((_animationFrame >= 26 || _animationFrame <= 30))|| ((_animationFrame >= 16 || _animationFrame <= 20))))
+                {*/
+                if (shootingAgain)
+                    _shooting = false;
+                if (_shooting)
                 {
-                    //if (position.Y > 170)
-                    CurrentPosition += new Vector2(0, -2) * 1.6f * CharBonusSpeed;
-
-                    _flippingTimer += gameTime.ElapsedGameTime.TotalSeconds;
-
-                    if (_flippingTimer > _flippingSpeed)
+                    if (keyboardState.IsKeyDown(Keys.Up))
                     {
-                        if (flipped)
-                            flipped = false;
-                        else
-                            flipped = true;
-
-                        _flippingTimer -= _flippingSpeed;
+                        shootUp = true;
+                        if (_weaponBounds.Width > _weaponBounds.Height)
+                            SwapWeaponBounds();
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Down))
+                    {
+                        shootDown = true;
+                        if (_weaponBounds.Width > _weaponBounds.Height)
+                            SwapWeaponBounds();
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Left))
+                    {
+                        shootLeft = true;
+                        if (_weaponBounds.Width < _weaponBounds.Height)
+                            SwapWeaponBounds();
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Right))
+                    {
+                        shootRight = true;
+                        if (_weaponBounds.Width < _weaponBounds.Height)
+                            SwapWeaponBounds();
                     }
                 }
-                if (keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
+                else
                 {
-                    //if (position.Y < 453)
-                    CurrentPosition += new Vector2(0, 2) * 1.6f * CharBonusSpeed;
-
-                    _flippingTimer += gameTime.ElapsedGameTime.TotalSeconds;
-
-                    if (_flippingTimer > _flippingSpeed)
-                    {
-                        if (flipped)
-                            flipped = false;
-                        else
-                            flipped = true;
-
-                        _flippingTimer -= _flippingSpeed;
-                    }
+                    shootRight = false;
+                    shootLeft = false;
+                    shootDown = false;
+                    shootUp = false;
 
                 }
-                if (keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
-                {
-                    //if (position.X > 20)
 
-                    CurrentPosition += new Vector2(-2, 0) * 1.6f * CharBonusSpeed;
-                    if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)
-                        || keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
+                if (!_softStopped)
+                {
+                    // Apply keyboard movement
+                    if (keyboardState.IsKeyDown(Keys.W))
                     {
+                        //if (position.Y > 170)
+                        CurrentPosition += new Vector2(0, -2) * 1.6f * CharBonusSpeed;
+
+                        _flippingTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
                         if (_flippingTimer > _flippingSpeed)
                         {
@@ -364,16 +397,13 @@ namespace Game_Project_4.Sprites
                             _flippingTimer -= _flippingSpeed;
                         }
                     }
-                    else
-                        flipped = true;
-                }
-                if (keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D))
-                {
-                    //if (position.X < 780)
-                    CurrentPosition += new Vector2(2, 0) * 1.6f * CharBonusSpeed;
-                    if (keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)
-                        || keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S))
+                    if (keyboardState.IsKeyDown(Keys.S))
                     {
+                        FacingDown();
+                        //if (position.Y < 453)
+                        CurrentPosition += new Vector2(0, 2) * 1.6f * CharBonusSpeed;
+
+                        _flippingTimer += gameTime.ElapsedGameTime.TotalSeconds;
 
                         if (_flippingTimer > _flippingSpeed)
                         {
@@ -384,104 +414,184 @@ namespace Game_Project_4.Sprites
 
                             _flippingTimer -= _flippingSpeed;
                         }
+
                     }
-                    else
-                        flipped = false;
-                }
+                    if (keyboardState.IsKeyDown(Keys.A))
+                    {
+                        //if (position.X > 20)
+
+                        CurrentPosition += new Vector2(-2, 0) * 1.6f * CharBonusSpeed;
+                        if (keyboardState.IsKeyDown(Keys.W) || keyboardState.IsKeyDown(Keys.S))
+                        {
+
+                            if (_flippingTimer > _flippingSpeed)
+                            {
+                                if (flipped)
+                                    flipped = false;
+                                else
+                                    flipped = true;
+
+                                _flippingTimer -= _flippingSpeed;
+                            }
+                        }
+                        else
+                        {
+                            flipped = true;
 
 
-                if (!(keyboardState.IsKeyDown(Keys.Up) || keyboardState.IsKeyDown(Keys.W)
-                        || keyboardState.IsKeyDown(Keys.Down) || keyboardState.IsKeyDown(Keys.S)
-                        || keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D)
-                        || keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A))
-                        && gamePadState.ThumbSticks.Left == new Vector2(0, 0)
-                        && !(WinManeuver || LossManeuver))
-                {
+                        }
+                    }
+                    if (keyboardState.IsKeyDown(Keys.D))
+                    {
+                        //if (position.X < 780)
+                        CurrentPosition += new Vector2(2, 0) * 1.6f * CharBonusSpeed;
+                        if (keyboardState.IsKeyDown(Keys.W) ||
+                             keyboardState.IsKeyDown(Keys.S))
+                        {
 
-                    _standing = true;
-                }
-                else _standing = false;
-            }
-            /*            else
+                            if (_flippingTimer > _flippingSpeed)
+                            {
+                                if (flipped)
+                                    flipped = false;
+                                else
+                                    flipped = true;
+
+                                _flippingTimer -= _flippingSpeed;
+                            }
+                        }
+                        else
                         {
                             flipped = false;
-                        }*/
-            #endregion
 
-            //to limit the sprite from getting out of map
-            #region Position Offset
+                        }
+                    }
 
 
-            if (CurrentPosition.X < 278)
-                CurrentPosition.X += 278 - CurrentPosition.X;
+                    if (!(keyboardState.IsKeyDown(Keys.W)
+                            || keyboardState.IsKeyDown(Keys.S)
+                            || keyboardState.IsKeyDown(Keys.D)
+                            || keyboardState.IsKeyDown(Keys.A))
+                            && gamePadState.ThumbSticks.Left == new Vector2(0, 0)
+                            && !(WinManeuver || LossManeuver))
+                    {
 
-            if (CurrentPosition.X > (MaxOffsetX -207))
-                CurrentPosition.X -= CurrentPosition.X - (MaxOffsetX -207);
+                        _standing = true;
+                    }
+                    else _standing = false;
+                }
+                /*            else
+                            {
+                                flipped = false;
+                            }*/
+                #endregion
 
-            if (CurrentPosition.Y < 170)
-                CurrentPosition.Y += 170 - CurrentPosition.Y;
-
-            if (CurrentPosition.Y > (MaxOffsetY - 250))
-                CurrentPosition.Y -= CurrentPosition.Y - (MaxOffsetY - 250);
-
-            #endregion
-
-            //Update the bounds
-            _characterBounds.X = CurrentPosition.X; //1.6f
-            _characterBounds.Y = CurrentPosition.Y + 20;    //1.6f
-
-            bool runningOrWeapon = ((_animationFrame >= 0 && _animationFrame <= 5) || (_animationFrame >= 16 && _animationFrame <= 20)) ? true : false;
-            if (!flipped)
-            {
-                if (runningOrWeapon) _characterBounds.X += 29;
-
-                _weaponBounds.X = CurrentPosition.X + 102.2f; //1.6f
-                _weaponBounds.Y = CurrentPosition.Y + 65f;    //1.6f
-
-            }
-            else
-            {
-                if (runningOrWeapon) _characterBounds.X -= 16;
-
-                _weaponBounds.X = CurrentPosition.X - 390.2f; //1.6f
-                _weaponBounds.Y = CurrentPosition.Y + 65f;    //1.6f
-            }
+                //to limit the sprite from getting out of map
+                #region Position Offset
 
 
-            #region Step Sound
-            _soundTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-            _laserTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
-            _charSpeedLimiter = (CharBonusSpeed - 1) / 4.5f;
-            if (_soundTimer * (1 + _charSpeedLimiter) > footstepSoundTimer)
-            {
-                if (!_standing && !Stopped && !_softStopped)
+                if (CurrentPosition.X < 278)
+                    CurrentPosition.X += 278 - CurrentPosition.X;
+
+                if (CurrentPosition.X > (MaxOffsetX - 207))
+                    CurrentPosition.X -= CurrentPosition.X - (MaxOffsetX - 207);
+
+                if (CurrentPosition.Y < 170)
+                    CurrentPosition.Y += 170 - CurrentPosition.Y;
+
+                if (CurrentPosition.Y > (MaxOffsetY - 250))
+                    CurrentPosition.Y -= CurrentPosition.Y - (MaxOffsetY - 250);
+
+                #endregion
+
+                //Update the bounds
+
+                #region Bounds And Flipping Logic
+
+                _characterBounds.X = CurrentPosition.X; //1.6f
+                _characterBounds.Y = CurrentPosition.Y + 20;    //1.6f
+
+                bool runningOrWeapon = ((_animationFrame >= 0 && _animationFrame <= 5) || (_animationFrame >= 16 && _animationFrame <= 20)) ? true : false;
+
+                if (!flipped)
                 {
-                    _steps[(int)_stepSound].Play();
-                    //if (Slowed) _steps[(int)_stepSound + 2].Play();
-                    if (_stepSound == StepSound.Left)
-                        _stepSound = StepSound.LightRight;
-                    else
-                        _stepSound = StepSound.Left;
+                    if (runningOrWeapon) _characterBounds.X += 29;
+                    if (!(shootUp || shootDown))
+                    {
+                        _weaponBounds.X = CurrentPosition.X + 102.2f; //1.6f
+                        _weaponBounds.Y = CurrentPosition.Y + 65f;    //1.6f
+                    }
+                    else if (shootUp)
+                    {
+                        _weaponBounds.X = CurrentPosition.X + 27; //1.6f
+                        _weaponBounds.Y = CurrentPosition.Y - 300;    //1.6f
+                    }
+                    else if (shootDown)
+                    {
+                        _weaponBounds.X = CurrentPosition.X + 27; //1.6f
+                        _weaponBounds.Y = CurrentPosition.Y + 78;    //1.6f
+                    }
 
                 }
-                _soundTimer = 0;
-            }
-
-            if (_laserTimer > 472)
-            {
-                if (_softStopped && ! Dead)
+                else
                 {
-                    _laserSound.Play();
-                }
-                _laserTimer = 0;
-            }
-            #endregion
-            float finalspeed = CurrentPosition.X - initSpeed;
+                    if (runningOrWeapon)
+                        _characterBounds.X -= 16;
 
-            if (_animationFrame == 19|| _animationFrame == 20)
-                Damaging = true;
-            else 
-                Damaging = false;
+
+                    if (!(shootUp || shootDown))
+                    {
+                        _weaponBounds.X = CurrentPosition.X - 390.2f; //1.6f
+                        _weaponBounds.Y = CurrentPosition.Y + 65f;    //1.6f
+                    }
+                    else if (shootUp)
+                    {
+                        _weaponBounds.X = CurrentPosition.X + 33; //1.6f
+                        _weaponBounds.Y = CurrentPosition.Y - 300;    //1.6f
+                    }
+                    else if (shootDown)
+                    {
+                        _weaponBounds.X = CurrentPosition.X + 33; //1.6f
+                        _weaponBounds.Y = CurrentPosition.Y + 78;    //1.6f
+                    }
+                }
+
+                #endregion
+
+                #region Step Sound
+                _soundTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+                _laserTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+                _charSpeedLimiter = (CharBonusSpeed - 1) / 4.5f;
+                if (_soundTimer * (1 + _charSpeedLimiter) > footstepSoundTimer)
+                {
+                    if (!_standing && !Stopped && !_softStopped)
+                    {
+                        _steps[(int)_stepSound].Play();
+                        //if (Slowed) _steps[(int)_stepSound + 2].Play();
+                        if (_stepSound == StepSound.Left)
+                            _stepSound = StepSound.LightRight;
+                        else
+                            _stepSound = StepSound.Left;
+
+                    }
+                    _soundTimer = 0;
+                }
+
+                if (_laserTimer > 472)
+                {
+                    if (_softStopped && !Dead)
+                    {
+                        _laserSound.Play();
+                    }
+                    _laserTimer = 0;
+                }
+                #endregion
+                float finalspeed = CurrentPosition.X - initSpeed;
+
+                if ((_animationFrame == 19 || _animationFrame == 20) || (_animationFrame == 24 || _animationFrame == 25) || (_animationFrame == 29 || _animationFrame == 39))
+                    Damaging = true;
+                else
+                    Damaging = false;
+            }
         }
 
 
@@ -506,31 +616,110 @@ namespace Game_Project_4.Sprites
                 {
                     _animationFrame++;
                     if (_standing == true && !_shooting)
+                    {
                         _animationFrame = 6;
+                        shootingAgain = false;
+
+                    }
 
                     else if (_shooting)
                     {
                         _softStopped = true;
-                        if (_animationFrame < 16 || _animationFrame > 20)
-
+                        if (shootDown)
                         {
-                            _animationFrame = 16;
+                            if ((_animationFrame < 21 || _animationFrame > 25))
+
+                            {
+                                if (_animationFrame == 26)
+                                    shootingAgain = true;
+                                else shootingAgain = false;
+                                _animationFrame = 21;
+                            }
                         }
-
-                        if ((keyboardState.IsKeyDown(Keys.Left) || keyboardState.IsKeyDown(Keys.A) || gamePadState.ThumbSticks.Left.X < 0) && _animationFrame <= 17)
-
+                        else if (shootUp)
                         {
-                            flipped = true;
+
+                            if (_animationFrame < 26 || _animationFrame > 30)
+
+                            {
+                                if (_animationFrame == 31)
+                                    shootingAgain = true;
+                                else shootingAgain = false;
+                                _animationFrame = 26;
+                            }
                         }
-                        else if ((keyboardState.IsKeyDown(Keys.Right) || keyboardState.IsKeyDown(Keys.D) || gamePadState.ThumbSticks.Left.X > 0) && _animationFrame <= 17)
+                        else if (shootRight)
                         {
+
                             flipped = false;
+                            if (_animationFrame < 16 || _animationFrame > 20)
+
+                            {
+                                if (_animationFrame == 21)
+                                    shootingAgain = true;
+                                else shootingAgain = false;
+                                _animationFrame = 16;
+                            }
                         }
+                        else if (shootLeft)
+                        {
+
+                            flipped = true;
+                            if (_animationFrame < 16 || _animationFrame > 20)
+
+                            {
+                                if (_animationFrame == 21)
+                                    shootingAgain = true;
+                                else shootingAgain = false;
+                                _animationFrame = 16;
+                            }
+                        }
+                        else
+                        {
+                            /*                            if (shootingTime > 0 )
+                            
+                                                        {
+                                                        }*/
+                        }
+                        /*                        if ((keyboardState.IsKeyDown(Keys.Up) ||
+                                                    gamePadState.ThumbSticks.Right.Y < 0) && (_animationFrame >= 27 && _animationFrame <= 30))
+                                                {
+                                                    shootUp = true;
+                                                    shootDown = false;
+                                                    shootLeft = false;
+                                                    shootRight = false;
+                                                }
+                                                else if ((keyboardState.IsKeyDown(Keys.Down) ||
+                                                    gamePadState.ThumbSticks.Right.Y > 0) && (_animationFrame >= 22 && _animationFrame <= 25))
+                                                {
+                                                    shootUp = false;
+                                                    shootDown = true;
+                                                    shootLeft = false;
+                                                    shootRight = false;
+                                                }
+                                                else if ((keyboardState.IsKeyDown(Keys.Left) ||
+                                                    gamePadState.ThumbSticks.Right.X < 0) && (_animationFrame >= 17 && _animationFrame <= 20))
+                                                {
+                                                    shootUp = false;
+                                                    shootDown = false;
+                                                    shootLeft = true;
+                                                    shootRight = false;
+                                                }
+                                                else if ((keyboardState.IsKeyDown(Keys.Right) ||
+                                                    gamePadState.ThumbSticks.Right.X > 0) && (_animationFrame >= 17 && _animationFrame <= 20))
+                                                {
+                                                    shootUp = false;
+                                                    shootDown = false;
+                                                    shootLeft = false;
+                                                    shootRight = true;
+                                                }*/
                     }
 
                     else if (_animationFrame > 5) // walking
                     {
                         _animationFrame = 0;
+                        shootingAgain = false;
+
                     }
 
                     if (!_shooting) _softStopped = false;
@@ -565,18 +754,58 @@ namespace Game_Project_4.Sprites
                     _animationTimer -= _animationSpeed;
                 }
             }
-
+            /*            if (keyboardState.IsKeyDown(Keys.T))
+                            _animationFrame = 26;
+                        if (keyboardState.IsKeyDown(Keys.Y))
+                            _animationFrame = 27;
+                        if (keyboardState.IsKeyDown(Keys.U))
+                            _animationFrame = 28;
+                        if (keyboardState.IsKeyDown(Keys.I))
+                            _animationFrame = 29;
+                        if (keyboardState.IsKeyDown(Keys.O))
+                            _animationFrame = 30;
+                        if (keyboardState.IsKeyDown(Keys.P))
+                            _animationFrame = 31;*/
             Rectangle source = new Rectangle();
-            if (_animationFrame < 16)
+            if (_animationFrame >= 0 && _animationFrame <= 15)
                 source = new Rectangle(_animationFrame * 46, 0, 46, 40);
-            else
+            else if (_animationFrame >= 16 && _animationFrame <= 20)
                 source = new Rectangle(736 + ((_animationFrame - 16) * 165), 0, 165, 40);
+            else if (_animationFrame >= 21 && _animationFrame <= 23)
+                source = new Rectangle(1563, 1 + (_animationFrame - 21) * 34, 32, 34);
+            else if (_animationFrame >= 24 && _animationFrame <= 25)
+                source = new Rectangle(1563, 1 + 102 + (_animationFrame - 24) * 144, 32, 144);
+            else if (_animationFrame >= 26 && _animationFrame <= 28)
+                source = new Rectangle(1604, 1 + (_animationFrame - 26) * 34, 32, 34);
+            else if (_animationFrame >= 29 && _animationFrame <= 30)
+                source = new Rectangle(1604, 104 + (_animationFrame - 29) * 144, 32, 145);
 
-            
+
             Vector2 origin = (flipped) ? new Vector2(20, 0) : new Vector2(0, 0);
 
-            if (_animationFrame >= 16 && _animationFrame  <=  20 && flipped)
-                origin.X += 117;
+            if (_animationFrame >= 16 && _animationFrame <= 20 && flipped)
+                origin.X += 110;
+
+            if (_animationFrame == 29 || _animationFrame == 30)
+                origin.Y += 110;
+
+
+
+            if (_animationFrame >= 21 && _animationFrame <= 30)
+            {
+                if (!flipped)
+                {
+                    origin.X += 5;
+                }
+                else
+                {
+                    origin.X -= 17;
+                }
+
+                origin.Y -= 6;
+
+
+            }
 
             SpriteEffects spriteEffects = (flipped) ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
             spriteBatch.Draw(_charTexture, CurrentPosition, source, Color, 0, origin, 2.8f, spriteEffects, 0.2f);

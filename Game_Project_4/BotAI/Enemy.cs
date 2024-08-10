@@ -403,9 +403,7 @@ namespace Game_Project_4.BotAI
             else if (_animationFrame == 28) // white death sprite
                 source = new Rectangle(0, 3635, 505, 181);
             else if (_animationFrame == 20) //walk
-            {
                 source = new Rectangle(0 * 216, 3895, 216, 180);
-            }
             else if (_animationFrame == 21)
                 source = new Rectangle(1 * 216, 3895, 216, 180);
             else if (_animationFrame == 22)
