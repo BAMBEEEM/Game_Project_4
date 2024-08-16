@@ -15,6 +15,7 @@ Used Assets Licenses and Credit:
 4-BossSound1.wav, BossSound2.wav
 -Creater: ColdAir
 -Modified By: Ebraheem Mustafa (layered 3 other personal sound effects for fullness, also changed pitch for variation.)
+-Link: https://freesound.org/people/ColdAir/sounds/175840/
 
 5-IngameSong.ogg
 -Creator: Ebraheem Mustafa
@@ -55,7 +56,6 @@ Modified By: Stephen Belanger, Zach Musgrave, Nathan Bean, Ebraheem Mustafa
 -Modification: Drawn 7 extra frames for a vertically higher attack.
 -Licensing: Allowed for commercial use and modification.
 -Link:  https://penusbmic.itch.io/character-pack-3
-
 
 12-FinalBoss.png
 -Creator: Penusbmic
