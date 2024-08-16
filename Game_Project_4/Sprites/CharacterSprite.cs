@@ -30,7 +30,7 @@ namespace Game_Project_4.Sprites
 
         private Texture2D _charTexture;
 
-        public Vector2 CurrentPosition = new Vector2(600, 200) * 1.6f;
+        public Vector2 CurrentPosition = new Vector2(930, 230);
 
         private BoundingRectangle _characterBounds = new BoundingRectangle(new Vector2(600 - 54, 200 - 56) * 1.6f, 23 * 2.8f, 33f * 2.8f);
 

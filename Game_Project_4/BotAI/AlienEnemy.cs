@@ -111,7 +111,7 @@ namespace Game_Project_4.BotAI
             }
             else
             {
-                Position = new(1270, RandomHelper.NextFloat(505, 600));
+                Position = new(1310, RandomHelper.NextFloat(505, 600));
             }
         }
 

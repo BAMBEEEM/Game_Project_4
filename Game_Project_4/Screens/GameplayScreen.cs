@@ -49,7 +49,7 @@ namespace Game_Project_4.Screens
         private CharacterSprite _mainCharacter;
         private SpriteFont spriteFont;
         private Enemy[] _enemy = new Enemy[6];
-        private AlienEnemy _alienEnemy = new AlienEnemy(RandomHelper.Next(1, 3), 6.5f);
+        private AlienEnemy _alienEnemy = new AlienEnemy(RandomHelper.Next(1, 3), 3.8f);
         private FinalBoss _finalBoss = new FinalBoss(1, 0);
         private StaminaBarSprite _staminaSprite;
 
@@ -555,21 +555,21 @@ namespace Game_Project_4.Screens
             }
             /*            else spriteBatch.DrawString(spriteFont, $"Score: {score}", new Vector2(310, 30) * 1.6f, Color.White);
             */             if (_levelThreeTimer >= 450 && _levelThreeTimer <= 2450)
-                spriteBatch.DrawString(spriteFont, $"Here Comes the boss!", new Vector2(225, 205) * 1.6f, Color.White);
+                spriteBatch.DrawString(spriteFont, $"Here Comes the boss!", new Vector2(222, 205) * 1.6f, Color.White);
 
              if (_levelThreeTimer >= 2950 && _levelThreeTimer <= 4950)
-                spriteBatch.DrawString(spriteFont, $"Final Round", new Vector2(303, 205) * 1.6f, Color.White);
+                spriteBatch.DrawString(spriteFont, $"Final Round", new Vector2(296, 205) * 1.6f, Color.White);
 
 
             else if (_levelTwoTimer >= 1550 && _levelTwoTimer <= 3450)
-                spriteBatch.DrawString(spriteFont, $"Round 2", new Vector2(326, 195) * 1.6f, Color.White);
+                spriteBatch.DrawString(spriteFont, $"Round 2", new Vector2(326, 204) * 1.6f, Color.White);
             else if (_levelOneTimer >= 3450 && _levelOneTimer <= 5450)
 
                 spriteBatch.DrawString(spriteFont, $"Defeat All Enemies!", new Vector2(234, 206) * 1.6f, Color.White);
 
             else if (_levelOneTimer >= 950 && _levelOneTimer <= 2950)
             {
-                spriteBatch.DrawString(spriteFont, $"Round 1", new Vector2(327, 202) * 1.6f, Color.White);
+                spriteBatch.DrawString(spriteFont, $"Round 1", new Vector2(327, 204) * 1.6f, Color.White);
 
             }
             spriteBatch.End();
