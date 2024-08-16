@@ -196,7 +196,7 @@ namespace Game_Project_4.Screens
 
         private float _levelOneTimer = 5500;
         private float _levelTwoTimer = 3500;
-        private float _levelThreeTimer = 3500;
+        private float _levelThreeTimer = 5000;
 
 
         // This method checks the GameScreen.IsActive property, so the game will
@@ -554,14 +554,18 @@ namespace Game_Project_4.Screens
                 }*/
             }
             /*            else spriteBatch.DrawString(spriteFont, $"Score: {score}", new Vector2(310, 30) * 1.6f, Color.White);
-            */
-            if (_levelThreeTimer >= 1550 && _levelThreeTimer <= 3450)
-                spriteBatch.DrawString(spriteFont, $"Final Round", new Vector2(303, 195) * 1.6f, Color.White);
+            */             if (_levelThreeTimer >= 450 && _levelThreeTimer <= 2450)
+                spriteBatch.DrawString(spriteFont, $"Here Comes the boss!", new Vector2(225, 205) * 1.6f, Color.White);
+
+             if (_levelThreeTimer >= 2950 && _levelThreeTimer <= 4950)
+                spriteBatch.DrawString(spriteFont, $"Final Round", new Vector2(303, 205) * 1.6f, Color.White);
+
+
             else if (_levelTwoTimer >= 1550 && _levelTwoTimer <= 3450)
                 spriteBatch.DrawString(spriteFont, $"Round 2", new Vector2(326, 195) * 1.6f, Color.White);
             else if (_levelOneTimer >= 3450 && _levelOneTimer <= 5450)
 
-                spriteBatch.DrawString(spriteFont, $"Defeat All Enemies!", new Vector2(234, 205) * 1.6f, Color.White);
+                spriteBatch.DrawString(spriteFont, $"Defeat All Enemies!", new Vector2(234, 206) * 1.6f, Color.White);
 
             else if (_levelOneTimer >= 950 && _levelOneTimer <= 2950)
             {
