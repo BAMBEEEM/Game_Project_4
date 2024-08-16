@@ -49,7 +49,7 @@ namespace Game_Project_4.Screens
 
         private MenuWood _wood;
         private StartButton _startButton;
-        private ScoreButton _scoreButton;
+        private ControlsButton _controlsButton;
         private bool _scoreClicked = false;
         private bool _returnClicked = false;
 
@@ -83,7 +83,7 @@ namespace Game_Project_4.Screens
             _inputState = new InputState();
             _wood = new MenuWood();
             _startButton = new StartButton();
-            _scoreButton = new ScoreButton();
+            _controlsButton = new ControlsButton();
             __forestIntro = new MenuBackground();
             _loadingText = new LoadingText();
 
@@ -94,7 +94,7 @@ namespace Game_Project_4.Screens
             _wood.LoadContent(_content);
             __forestIntro.LoadContent(_content);
             _startButton.LoadContent(_content);
-            _scoreButton.LoadContent(_content);
+            _controlsButton.LoadContent(_content);
 
             /*
                         _menuSong = _content.Load<Song>("MenuSongWithLoop");
@@ -125,15 +125,15 @@ namespace Game_Project_4.Screens
             {
                 _startButton.IsSelected = false;
                 _startButton.Shade = Color.White;
-                _scoreButton.IsSelected = false;
-                _scoreButton.Shade = Color.White;
+                _controlsButton.IsSelected = false;
+                _controlsButton.Shade = Color.White;
                 _loadingText.ReturnButton.Shade = Color.White;
                 _loadingText.ReturnButton.IsSelected = false;
 
             }
             else
             {
-                if (_startButton.IsSelected || _scoreButton.IsSelected || _loadingText.ReturnButton.IsSelected)
+                if (_startButton.IsSelected || _controlsButton.IsSelected || _loadingText.ReturnButton.IsSelected)
                 {
 
                     ScreenManager.Game.IsMouseVisible = false;
@@ -144,24 +144,24 @@ namespace Game_Project_4.Screens
 
 
 
-            if (_scoreButton.Bounds.CollidesWith(_inputState.Cursor) && _inputState.Clicked)
-                _scoreButton.InitialClick = true;
+            if (_controlsButton.Bounds.CollidesWith(_inputState.Cursor) && _inputState.Clicked)
+                _controlsButton.InitialClick = true;
 
-            if (_scoreButton.Bounds.CollidesWith(_inputState.Cursor) && _scoreButton.InitialClick)
+            if (_controlsButton.Bounds.CollidesWith(_inputState.Cursor) && _controlsButton.InitialClick)
             {
                 if (_inputState.Clicking)
                 {
-                    _scoreButton.Shade = Color.DarkGray;
+                    _controlsButton.Shade = Color.DarkGray;
 
                 }
                 else
                 {
-                    _scoreButton.Shade = Color.White;
+                    _controlsButton.Shade = Color.White;
                 }
                 if (Mouse.GetState().LeftButton == ButtonState.Released)
                 {
-                    _scoreButton.Shade = Color.DarkGray;
-                    _scoreButton.InitialClick = false;
+                    _controlsButton.Shade = Color.DarkGray;
+                    _controlsButton.InitialClick = false;
                     _scoreClicked = true;
                 }
             }
@@ -169,9 +169,9 @@ namespace Game_Project_4.Screens
             {
                 if (_inputState.CurrentMouseState.LeftButton == ButtonState.Released)
                 {
-                    _scoreButton.InitialClick = false;
+                    _controlsButton.InitialClick = false;
                 }
-                _scoreButton.Shade = Color.White;
+                _controlsButton.Shade = Color.White;
             }
 
             if (_startButton.Bounds.CollidesWith(_inputState.Cursor) && _inputState.Clicked)
@@ -246,17 +246,17 @@ namespace Game_Project_4.Screens
                     if (_startButton.IsSelected)
                     {
                         _startButton.IsSelected = false;
-                        _scoreButton.IsSelected = true;
+                        _controlsButton.IsSelected = true;
                     }
-                    else if (_scoreButton.IsSelected)
+                    else if (_controlsButton.IsSelected)
                     {
                         _startButton.IsSelected = true;
-                        _scoreButton.IsSelected = false;
+                        _controlsButton.IsSelected = false;
                     }
                     else
                     {
                         _startButton.IsSelected = true;
-                        _scoreButton.IsSelected = false;
+                        _controlsButton.IsSelected = false;
                     }
 
                 }
@@ -267,17 +267,17 @@ namespace Game_Project_4.Screens
                     if (_startButton.IsSelected)
                     {
                         _startButton.IsSelected = false;
-                        _scoreButton.IsSelected = true;
+                        _controlsButton.IsSelected = true;
                     }
-                    else if (_scoreButton.IsSelected)
+                    else if (_controlsButton.IsSelected)
                     {
                         _startButton.IsSelected = true;
-                        _scoreButton.IsSelected = false;
+                        _controlsButton.IsSelected = false;
                     }
                     else
                     {
                         _startButton.IsSelected = false;
-                        _scoreButton.IsSelected = true;
+                        _controlsButton.IsSelected = true;
                     }
 
 
@@ -292,7 +292,7 @@ namespace Game_Project_4.Screens
                     }
                     else
                     {
-                        _scoreButton.Shade = Color.DarkGray;
+                        _controlsButton.Shade = Color.DarkGray;
                         /*                    _difficultyButton.NextDifficulty();
                         */
                     }
@@ -326,6 +326,7 @@ namespace Game_Project_4.Screens
             _time = 0;
             _isTransitioning = true;
             _timeSinceTransition = 0;
+            ScreenManager.Game.IsMouseVisible = false;
             StartGame();
         }
 
@@ -414,7 +415,7 @@ namespace Game_Project_4.Screens
 
             _startButton.Draw(_spriteBatch);
 
-            _scoreButton.Draw(_spriteBatch);
+            _controlsButton.Draw(_spriteBatch);
             _spriteBatch.End();
 
 

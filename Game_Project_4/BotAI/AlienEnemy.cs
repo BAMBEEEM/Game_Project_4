@@ -2,6 +2,7 @@
 using Game_Project_4.ParticleManagement;
 using Game_Project_4.Sprites;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
@@ -38,6 +39,8 @@ namespace Game_Project_4.BotAI
 
         private double _animationTimer;
 
+        private double _laserTimer;
+
         private float _flippingSpeed = 0.35f;
 
         public bool Stopped = true;
@@ -71,9 +74,9 @@ namespace Game_Project_4.BotAI
 
         private KeyboardState keyboardState;
 
-        public float Health = 250;
+        public float Health = 550;
 
-        public float AttackDamage = 6;
+        public float AttackDamage = 15;
 
         KeyboardState _previousKeyboardState;
 
@@ -81,7 +84,7 @@ namespace Game_Project_4.BotAI
 
         private BoundingRectangle _attackBounds = new BoundingRectangle(new Vector2(600 - 54, 200 - 56) * 1.6f, 395, 210);
 
-        public bool Initializing = false;
+        public bool Initializing = true;
 
         /// <summary>
         /// The bounding volume of the sprite's attack
@@ -96,12 +99,15 @@ namespace Game_Project_4.BotAI
         public BoundingRectangle CharacterBounds => _characterBounds;
 
         private bool _allAnimations = false;
+
+        private SoundEffect _laserSound;
+
         public AlienEnemy(int position, float respawnTime)
         {
             RespawnTime = respawnTime;
             if (position == 1)
             {
-                Position = new Vector2(300, 280);
+                Position = new(-190, RandomHelper.NextFloat(505, 600));
             }
             else
             {
@@ -114,6 +120,9 @@ namespace Game_Project_4.BotAI
             _attackTexture = content.Load<Texture2D>("AlienEnemy");
             /*            _runningTexture = content.Load<Texture2D>("run");
             */
+
+            _laserSound = content.Load<SoundEffect>("AlienSound");
+
         }
 
         private float _deadTime;
@@ -121,7 +130,7 @@ namespace Game_Project_4.BotAI
         {
 
 
-/*            if (Initializing & !Stopped)
+            if (Initializing & !Stopped)
             {
                 if (Position.X < 170)
                     Position += new Vector2(0.79f, 0) * Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
@@ -131,9 +140,9 @@ namespace Game_Project_4.BotAI
 
                 if (Position.Y > 510) Position += new Vector2(0, -0.79f) * Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
 
-                if ((Position.X >= 170 && Position.X <= 1070) || direction.Length() < 100)
+                if ((Position.X >= 170 && Position.X <= 1070))
                     Initializing = false;
-            }*/
+            }
 
             if (Dead)
             {
@@ -162,11 +171,11 @@ namespace Game_Project_4.BotAI
                 flipped = (flipped) ? flipped = false : flipped = true;
             }*/
 
-            if (keyboardState.IsKeyDown(Keys.X))
+/*            if (keyboardState.IsKeyDown(Keys.X))
             {
                 AllAnimations();
                 _allAnimations = true;
-            }
+            }*/
 
 
             #endregion
@@ -176,6 +185,7 @@ namespace Game_Project_4.BotAI
             {
                 Dead = true;
                 Damaging = false;
+                AttackDamage = 0;
             }
 
             if (Player is null) return;
@@ -225,7 +235,7 @@ namespace Game_Project_4.BotAI
             }
 
 
-            if (direction.X > 0)
+            if (direction.X > 75)
             {
                 if (!_attacking && !(_animationFrame >= 16 && _animationFrame <= 29) && !Dead)
                     flipped = false;
@@ -243,7 +253,7 @@ namespace Game_Project_4.BotAI
             {   //do the run()
                 Running();
                 direction.Normalize();
-
+                if (!Dead)
                 Position += direction * Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
             else if (direction.Length() < maximumDistance && !_charging && !_attacking)
@@ -269,9 +279,22 @@ namespace Game_Project_4.BotAI
 
             if (_attackTimerLength > 0)
             {
-                _attacking = true;
-                _running = false;
-                _charging = false;
+                if (direction.Y > -400 && direction.Y < 0)
+                {
+                    if (!Dead)
+                    Position += new Vector2(0, -1) * Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else if (direction.Y > 130 && direction.Y < 400)
+                {
+                    if (!Dead)
+                        Position += new Vector2(0, 1) * Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                }
+                else
+                {
+                    _attacking = true;
+                    _running = false;
+                    _charging = false;
+                }
             }
             else if (_attacking)
             {
@@ -290,6 +313,17 @@ namespace Game_Project_4.BotAI
                 Damaging = true;
             else
                 Damaging = false;
+
+            _laserTimer += gameTime.ElapsedGameTime.TotalMilliseconds;
+
+/*            if (_laserTimer > 600)
+            {*/
+                if (_chargeTimerLength <= 670 && _chargeTimerLength >= 640 && _charging && !Dead && !Player.Dead)
+/*                {*/
+                    _laserSound.Play();
+/*                }
+                _laserTimer = 0;
+            }*/
         }
 
 

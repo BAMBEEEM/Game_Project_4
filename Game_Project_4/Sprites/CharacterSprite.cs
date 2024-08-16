@@ -37,6 +37,7 @@ namespace Game_Project_4.Sprites
 
         private BoundingRectangle _weaponBounds = new BoundingRectangle(new Vector2(600 - 54, 200 - 56) * 1.6f, 368f, 8.3f);
 
+        public bool Invincible = false; 
 
         private bool flipped;
 
@@ -114,7 +115,7 @@ namespace Game_Project_4.Sprites
         private bool _isCharging;
         private float _timeSinceDash;
 
-        public float Health = 750;
+        public float Health = 2450;
 
         public bool Dead = false;
 
@@ -181,6 +182,9 @@ namespace Game_Project_4.Sprites
             _facingDown = true;
             _facingUp = false;
         }
+
+        float dashtime = 0;
+
         public void Update(GameTime gameTime)
         {
 
@@ -190,17 +194,20 @@ namespace Game_Project_4.Sprites
                 Stopped = true;
             }
 
+            if (keyboardState.IsKeyDown(Keys.Tab) && _previousKeyboardState.IsKeyUp(Keys.Tab))
+                Invincible = Invincible ? false : true;
+
             float initSpeed = CurrentPosition.X; //debug
             /*            if (keyboardState.IsKeyDown(Keys.K))
                             Dead = true;*/
 
-            if (WinManeuver == true)
+/*            if (WinManeuver == true)
             {
                 CurrentPosition += new Vector2(2, 0) * 1.6f * CharBonusSpeed;
                 if (CurrentPosition.Y < 380)
                     CurrentPosition += new Vector2(0, 2) * 1.6f * CharBonusSpeed;
                 else if (CurrentPosition.Y > 385) CurrentPosition += new Vector2(0, -2) * 1.6f * CharBonusSpeed;
-            }
+            }*/
 
             if (LossManeuver == true)
             {
@@ -222,20 +229,22 @@ namespace Game_Project_4.Sprites
 
 
             _timeSinceDash += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-            /*            if (_timeSinceDash > DifficultySettings.StaminaDelay)
-                        {
-                            _staminaChargeTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
-                            if (Stamina < 100)
-                            {
-                                if (_staminaChargeTimer > DifficultySettings.StaminaRate && !Stopped)
-                                {
-                                    Stamina += 2.5f;
-                                    _staminaChargeTimer = 0;
-                                }
-                            }
-                        }*/
+            if (_timeSinceDash > 1750)
+            {
+                _staminaChargeTimer += (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+                if (Stamina < 100)
+                {
+                    if (_staminaChargeTimer > 175 && !Stopped)
+                    {
+                        Stamina += 2.5f;
+                        _staminaChargeTimer = 0;
+                    }
+                }
+            }
 
 
+            if (dashtime > 0)
+                dashtime -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
 
             _previousKeyboardState = keyboardState;
             _previousGamePadState = gamePadState;
@@ -252,43 +261,34 @@ namespace Game_Project_4.Sprites
 
             }
             Rectangle source = new Rectangle(0, 0, 224, 160);
-
+            if (keyboardState.IsKeyDown(Keys.Space) && _previousKeyboardState.IsKeyUp(Keys.Space))
+            {
+                if (Stamina >= 25 && !Stopped)
+                {
+                    _timeSinceDash = 0;
+                    // Perform dash action
+                    Stamina -= 25;
+                    dashtime = 250;
+                    // Reset the timer
+                    _lastSpacePressTime = 0;
+                    _dashSound.Play();
+                }
+            }
             // Check for double press of space within 500ms
-            if ((keyboardState.IsKeyDown(Keys.B)) || (keyboardState.IsKeyDown(Keys.Left)) || (keyboardState.IsKeyDown(Keys.Right)) || (keyboardState.IsKeyDown(Keys.Up)) || (keyboardState.IsKeyDown(Keys.Down))
+            if ((keyboardState.IsKeyDown(Keys.Left)) || (keyboardState.IsKeyDown(Keys.Right)) || (keyboardState.IsKeyDown(Keys.Up)) || (keyboardState.IsKeyDown(Keys.Down))
                 || (gamePadState.IsButtonDown(Buttons.RightTrigger) && _previousGamePadState.IsButtonUp(Buttons.RightTrigger)))
             {
                 _shooting = true;
                 shootingTime = 450;
                 _lastflipped = flipped;
-                /*float timeSinceLastPress = currentTime - _lastSpacePressTime;
-                                if (timeSinceLastPress < 500 && Stamina >= DifficultySettings.StaminaUsePerDash && !Stopped)
-                                {
-                                    _timeSinceDash = 0;
-                                    // Perform dash action
-                                    Stamina -= DifficultySettings.StaminaUsePerDash;
-                                    dashtime = 250;
-                                    // Reset the timer
-                                    _lastSpacePressTime = 0;
-                                    _dashSound.Play();
-                                }
-                                else
-                                {
-                                    _lastSpacePressTime = currentTime;
-                                }*/
+
             }
             //dashtime = 250; //for debug
 
             float footstepSoundTimer = 300;
-            /*            if (!Slowed)
-                        {
-                            CharBonusSpeed = DifficultySettings.CharSpeedWithoutSlow + (6.1f * (dashtime / 250));
-                            footstepSoundTimer = 300;
-                        }
-                        else
-                        {
-                            CharBonusSpeed = DifficultySettings.CharSpeedWithSlow + (4.5f * (dashtime / 250));
-                            footstepSoundTimer = 500;
-                        }*/
+
+                CharBonusSpeed = 1 + (3.25f * (dashtime / 250));
+
             float laserSoundTimer = 1000;
 
 
@@ -498,8 +498,8 @@ namespace Game_Project_4.Sprites
                 if (CurrentPosition.Y < 170)
                     CurrentPosition.Y += 170 - CurrentPosition.Y;
 
-                if (CurrentPosition.Y > (MaxOffsetY - 250))
-                    CurrentPosition.Y -= CurrentPosition.Y - (MaxOffsetY - 250);
+                if (CurrentPosition.Y > (MaxOffsetY - 210))
+                    CurrentPosition.Y -= CurrentPosition.Y - (MaxOffsetY - 210);
 
                 #endregion
 
@@ -576,13 +576,14 @@ namespace Game_Project_4.Sprites
                     _soundTimer = 0;
                 }
 
-                if (_laserTimer > 472)
+                if (_laserTimer > 600)
                 {
                     if (_softStopped && !Dead)
                     {
-                        _laserSound.Play();
+                        if (_animationFrame == 21 || _animationFrame == 26 || _animationFrame == 16)
+                            _laserSound.Play();
+                        _laserTimer = 0;
                     }
-                    _laserTimer = 0;
                 }
                 #endregion
                 float finalspeed = CurrentPosition.X - initSpeed;
@@ -766,6 +767,8 @@ namespace Game_Project_4.Sprites
                             _animationFrame = 30;
                         if (keyboardState.IsKeyDown(Keys.P))
                             _animationFrame = 31;*/
+
+            if (WinManeuver) _animationFrame = 6;
             Rectangle source = new Rectangle();
             if (_animationFrame >= 0 && _animationFrame <= 15)
                 source = new Rectangle(_animationFrame * 46, 0, 46, 40);

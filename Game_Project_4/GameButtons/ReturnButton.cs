@@ -15,8 +15,8 @@ namespace Game_Project_4.GameButtons
 
         private Texture2D _texture;
 
-        private BoundingRectangle bounds => new BoundingRectangle(new Vector2(267 + 16 - 18.3125f, 300) * 1.52f, 124 * 2.3f * 1.52f, 31 * 2.3f * 1.52f);
-        private Vector2 _position => new Vector2(267 + 16, 300) * 1.52f;
+        private BoundingRectangle bounds => new BoundingRectangle(new Vector2(268 + 16 - 18.3125f, 300) * 1.52f, 124 * 2.3f * 1.52f, 31 * 2.3f * 1.52f);
+        private Vector2 _position => new Vector2(268 + 16, 302) * 1.52f;
         public Color Shade = Color.White;
         public bool InitialClick = false;
 

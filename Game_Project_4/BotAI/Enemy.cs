@@ -69,6 +69,8 @@ namespace Game_Project_4.BotAI
 
         public float Health = 250;
 
+        public int Level = 0;
+
         public float AttackDamage = 7;
 
         KeyboardState _previousKeyboardState;
@@ -92,8 +94,9 @@ namespace Game_Project_4.BotAI
         public BoundingRectangle CharacterBounds => _characterBounds;
 
 
-        public Enemy(int position, float respawnTime)
+        public Enemy(int position, float respawnTime, int level)
         {
+            Level = level;
             RespawnTime = respawnTime;
             if (position == 1)
             {

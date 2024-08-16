@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -29,7 +29,7 @@ namespace Game_Project_4.Misc
 
                     lineNum++;
 
-/*                    if (line[0] == '1')  // checks first character
+*//*                    if (line[0] == '1')  // checks first character
                     {
                         if (toDoList.Count < 15) // maximum to-do list count is 15
                         {
@@ -57,7 +57,7 @@ namespace Game_Project_4.Misc
 /*                    else
                     {
                         // MessageBox.Show("GoalActivity.txt might be corrupted");
-                    }*/
+                    }*//*
                 }
             }
 
@@ -89,7 +89,7 @@ namespace Game_Project_4.Misc
                 //sw.WriteLine($"{score} - {dt}");
 
 
-                /*                toDoList = toDoList.OrderBy(arr => arr[1]).ToList(); // to sort by priority, hence arr[1]
+                *//*                toDoList = toDoList.OrderBy(arr => arr[1]).ToList(); // to sort by priority, hence arr[1]
                                 foreach (string[] s in toDoList)
                                     sw.WriteLine($"{s[0]};{s[1]};{s[2]};{s[3]};{s[4]}");
 
@@ -100,8 +100,9 @@ namespace Game_Project_4.Misc
                                 doneList = doneList.OrderBy(arr => arr[1]).ToList(); // to sort
                                 foreach (string[] s in doneList)
                                     sw.WriteLine($"{s[0]};{s[1]};{s[2]};{s[3]};{s[4]}");
-                            }*/
+                            }*//*
             }
         }
     }
 }
+*/

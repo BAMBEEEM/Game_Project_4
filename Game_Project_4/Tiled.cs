@@ -988,7 +988,7 @@ namespace Game_Project_4
             {
                 tileset.Texture = content.Load<Texture2D>(
                     Path.Combine(Path.GetDirectoryName(tileset.Image), Path.GetFileNameWithoutExtension(tileset.Image))
-                );
+                ); 
             }
 
             foreach (var objects in result.ObjectGroups.Values)

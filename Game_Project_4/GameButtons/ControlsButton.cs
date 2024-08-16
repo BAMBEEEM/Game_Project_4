@@ -14,11 +14,11 @@ namespace Game_Project_4.GameButtons
     /// <summary>
     /// A class that represents the menu buttons.
     /// </summary>
-    public class ScoreButton
+    public class ControlsButton
     {
-        private BoundingRectangle bounds = new BoundingRectangle(new Vector2(305 + 16 - 19.0625f, 240) * 1.52f, 92 * 2.3f * 1.52f, 31 * 2.3f * 1.52f);
+        private BoundingRectangle bounds = new BoundingRectangle(new Vector2(281.5F + 16 - 19.0625f, 246) * 1.52f, 112 * 2.3f * 1.52f, 31 * 2.3f * 1.52f);
         private Texture2D _texture;
-        private Vector2 _position = new Vector2(305 + 16, 240) * 1.52f;
+        private Vector2 _position = new Vector2(281.5F + 16, 246) * 1.52f;
 
         public bool IsSelected = false;
         /// <summary>
@@ -56,7 +56,7 @@ namespace Game_Project_4.GameButtons
             else if (DifficultySettings.SetDifficulty == Enums.Difficulty.Normal)
                 source = new Rectangle(93, 1192, 92, 32);
 
-            else*/ source = new Rectangle(302, 1230, 92, 32);
+            else*/ source = new Rectangle(0, 1320, 112, 31);
 
 
             spriteBatch.Draw(_texture, _position, source, Shade, 0, new Vector2(8, 0), 2.3f * 1.52f, SpriteEffects.None, 1);

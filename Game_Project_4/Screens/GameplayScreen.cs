@@ -48,9 +48,10 @@ namespace Game_Project_4.Screens
 
         private CharacterSprite _mainCharacter;
         private SpriteFont spriteFont;
-        private Enemy[] _enemy = new Enemy[18];
-        private AlienEnemy _alienEnemy = new AlienEnemy(1, 0);
+        private Enemy[] _enemy = new Enemy[6];
+        private AlienEnemy _alienEnemy = new AlienEnemy(RandomHelper.Next(1, 3), 6.5f);
         private FinalBoss _finalBoss = new FinalBoss(1, 0);
+        private StaminaBarSprite _staminaSprite;
 
 
         private bool _won = false;
@@ -77,6 +78,7 @@ namespace Game_Project_4.Screens
 
         private BackgroundDetails _backgroundDetails;
 
+        private int _level = 0;
 
 
 
@@ -106,6 +108,8 @@ namespace Game_Project_4.Screens
             _map = Map.Load(Path.Combine(_content.RootDirectory, "Cursed_land.tmx"), _content);
             _groundLayer = _content.Load<BasicTilemap>("example2");
 
+            _staminaSprite = new StaminaBarSprite();
+            _staminaSprite.LoadContent(_content);
 
             _backgroundDetails = new BackgroundDetails();
             _backgroundDetails.LoadContent(_content);
@@ -118,9 +122,22 @@ namespace Game_Project_4.Screens
 
             _finalBoss.LoadContent(_content);
 
-            for (int i = 0; i < 18; i++)
+            for (int i = 0; i < 6; i++)
             {
-                _enemy[i] = new Enemy(RandomHelper.Next(1, 3), i * 2.45f);
+                int level;
+                float time;
+                if (i <= 1)
+                {
+                    level = 1;
+                    time = i * 2.45f;
+                }
+                else
+                {
+                    level = 2;
+                    time = (i - 2) * 2.45f;
+                }
+
+                _enemy[i] = new Enemy(RandomHelper.Next(1, 3), time, level);
                 _enemy[i].LoadContent(_content);
                 _enemy[i].Player = _mainCharacter;
             }
@@ -133,6 +150,9 @@ namespace Game_Project_4.Screens
 
             _mainCharacter.MaxOffsetY = (ScreenManager.GraphicsDevice.Viewport.Height);
 
+            _finalBoss.MaxOffsetX = (ScreenManager.GraphicsDevice.Viewport.Width);
+
+            _finalBoss.MaxOffsetY = (ScreenManager.GraphicsDevice.Viewport.Height);
 
 
             spriteFont = _content.Load<SpriteFont>("retro");
@@ -157,7 +177,7 @@ namespace Game_Project_4.Screens
 
 
 
-            //MediaPlayer.Play(_ingameSong);
+            MediaPlayer.Play(_ingameSong);
             MediaPlayer.IsRepeating = true;
         }
 
@@ -174,10 +194,51 @@ namespace Game_Project_4.Screens
         private int _killed = 0;
         private bool _saved = false;
 
+        private float _levelOneTimer = 5500;
+        private float _levelTwoTimer = 3500;
+        private float _levelThreeTimer = 3500;
+
+
         // This method checks the GameScreen.IsActive property, so the game will
         // stop updating when the pause menu is active, or if you tab away to a different application.
         public override void Update(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
         {
+            if (_finalBoss.Dead)
+                _won = true;
+            else if (_levelThreeTimer < 0 && !(_level == 3))
+
+            {
+                _level = 3;
+                ScreenManager.Game.ResetElapsedTime();
+                _mainTimer = 0;
+            }
+            else if (_levelTwoTimer < 0 && !(_level >= 2))
+
+            {
+                _level = 2;
+                ScreenManager.Game.ResetElapsedTime();
+                _mainTimer = 0;
+            }
+            else if (_levelOneTimer < 0 && !(_level >= 1))
+
+            { 
+                _level = 1;
+                ScreenManager.Game.ResetElapsedTime();
+                _mainTimer = 0;
+            }
+
+            if (_enemy[2].Dead && _enemy[3].Dead && _enemy[4].Dead && _enemy[5].Dead && _alienEnemy.Dead)
+            {
+                _levelThreeTimer -= (float) gameTime.ElapsedGameTime.TotalMilliseconds;
+            }
+
+            if (_enemy[0].Dead && _enemy[1].Dead )
+                _levelTwoTimer -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+            if (_level == 0)
+                _levelOneTimer -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
+
+
             _alienEnemy.Update(gameTime);
             _finalBoss.Update(gameTime);
             _startTimer -= (float)gameTime.ElapsedGameTime.TotalMilliseconds;
@@ -188,49 +249,44 @@ namespace Game_Project_4.Screens
             }
             else if (_startTimer > -18) _mainCharacter.Stopped = false;
 
+            _staminaSprite.Stamina = _mainCharacter.Stamina;
 
-            if (_killed == 18)
-                _won = true;
 
-            _killed = 0;
+
             _mainCharacter.Color = Color.White; // default color
             foreach (Enemy e in _enemy)
             {
-                if (e.RespawnTime < _mainTimer)
-                    e.Stopped = true;
+                if (e.RespawnTime < _mainTimer && e.Level == _level)
+                    e.Stopped = false;
                 else e.Stopped = true;
 
                 if (e.Dead)
                     _killed++;
                 e.Update(gameTime);
             }
+
+            if (_alienEnemy.RespawnTime < _mainTimer && _level == 2)
+                _alienEnemy.Stopped = false;
+            else _alienEnemy.Stopped = true;
+
+            if (_level == 3)
+                _finalBoss.Stopped = false;
+            else _finalBoss.Stopped = true;
+
             _mainCharacter.Update(gameTime);
 
             if (_mainCharacter.Dead)
                 _lost = true;
             // very good for testing: 
-/*            if (CollisionHelper.Collides(new BoundingRectangle(Mouse.GetState().Position.X, Mouse.GetState().Position.Y, 1, 1), _mainCharacter.WeaponBounds))
-                _mainCharacter.Color = Color.Red;
-            else _mainCharacter.Color = Color.White;*/
-
-            if (_mainCharacter.WeaponBounds.CollidesWith(_alienEnemy.CharacterBounds) && _mainCharacter.Damaging && !_alienEnemy.Dead)
-            {
-                _alienEnemy.Health -= _mainCharacter.AtackFirepower;
-                _alienEnemy.Color = Color.Red;
-            }
-            else _alienEnemy.Color = Color.White;
+            if (CollisionHelper.Collides(new BoundingRectangle(Mouse.GetState().Position.X, Mouse.GetState().Position.Y, 1, 1), _finalBoss.AttackBounds) && _finalBoss.Damaging)
+                _finalBoss.Color = Color.Red;
+            else _finalBoss.Color = Color.White;
 
 
-            if (_alienEnemy.AttackBounds.CollidesWith(_mainCharacter.CharacterBounds) && _alienEnemy.Damaging && !_mainCharacter.Dead)
-            {
-                _mainCharacter.Health -= _alienEnemy.AttackDamage;
-                _mainCharacter.Color = Color.Red;
-            }
 
             float respawnTime = 0;
             foreach (Enemy enemy in _enemy)
             {
-
 
                 if (_mainCharacter.WeaponBounds.CollidesWith(enemy.CharacterBounds) && _mainCharacter.Damaging && !enemy.Dead)
                 {
@@ -239,31 +295,61 @@ namespace Game_Project_4.Screens
                 }
                 else enemy.Color = Color.White;
 
+                if (!_mainCharacter.Invincible)
+                    if (enemy.AttackBounds.CollidesWith(_mainCharacter.CharacterBounds) && enemy.Damaging && !_mainCharacter.Dead)
+                    {
+                        _mainCharacter.Health -= enemy.AttackDamage;
+                        _mainCharacter.Color = Color.Red;
+                    }
+            }
 
-                if (enemy.AttackBounds.CollidesWith(_mainCharacter.CharacterBounds) && enemy.Damaging && !_mainCharacter.Dead)
+            if (_mainCharacter.WeaponBounds.CollidesWith(_alienEnemy.CharacterBounds) && _mainCharacter.Damaging && !_alienEnemy.Dead)
+            {
+                _alienEnemy.Health -= _mainCharacter.AtackFirepower;
+                _alienEnemy.Color = Color.Red;
+            }
+            else _alienEnemy.Color = Color.White;
+
+            if (!_mainCharacter.Invincible)
+
+                if (_alienEnemy.AttackBounds.CollidesWith(_mainCharacter.CharacterBounds) && _alienEnemy.Damaging && !_mainCharacter.Dead && !_alienEnemy.Dead)
                 {
-                    _mainCharacter.Health -= enemy.AttackDamage;
+                    _mainCharacter.Health -= _alienEnemy.AttackDamage;
                     _mainCharacter.Color = Color.Red;
                 }
-            }
 
-
-
-
-/*            introProgress += gameTime.ElapsedGameTime;
-            TimeSpan songDurationLeft = TimeSpan.Zero;
-            if (introProgress >= _ingameSong.Duration - TimeSpan.FromMilliseconds(85))
+            if (_mainCharacter.WeaponBounds.CollidesWith(_finalBoss.CharacterBounds) && _mainCharacter.Damaging && !_finalBoss.Dead)
             {
-                songDurationLeft.Add(TimeSpan.FromMilliseconds(introProgress.TotalMilliseconds - _ingameSong.Duration.TotalMilliseconds));
+                _finalBoss.Health -= _mainCharacter.AtackFirepower;
+                _finalBoss.Color = Color.Red;
             }
+            else _finalBoss.Color = Color.White;
 
-            if (introProgress.TotalMilliseconds >= _ingameSong.Duration.TotalMilliseconds - 18)
-            {
-                introProgress = TimeSpan.Zero;
-                MediaPlayer.Stop();
-                MediaPlayer.Play(_ingameSong);
-            }
-            songDurationLeft = TimeSpan.Zero;*/
+            if (!_mainCharacter.Invincible)
+
+                if (_finalBoss.AttackBounds.CollidesWith(_mainCharacter.CharacterBounds) && _finalBoss.Damaging && !_mainCharacter.Dead)
+                {
+                    _mainCharacter.Health -= _alienEnemy.AttackDamage;
+                    _mainCharacter.Color = Color.Red;
+                }
+
+
+
+
+            /*            introProgress += gameTime.ElapsedGameTime;
+                        TimeSpan songDurationLeft = TimeSpan.Zero;
+                        if (introProgress >= _ingameSong.Duration - TimeSpan.FromMilliseconds(85))
+                        {
+                            songDurationLeft.Add(TimeSpan.FromMilliseconds(introProgress.TotalMilliseconds - _ingameSong.Duration.TotalMilliseconds));
+                        }
+
+                        if (introProgress.TotalMilliseconds >= _ingameSong.Duration.TotalMilliseconds - 18)
+                        {
+                            introProgress = TimeSpan.Zero;
+                            MediaPlayer.Stop();
+                            MediaPlayer.Play(_ingameSong);
+                        }
+                        songDurationLeft = TimeSpan.Zero;*/
 
 
             // responsible for time limit
@@ -271,20 +357,18 @@ namespace Game_Project_4.Screens
             _elapsedTime += gameTime.ElapsedGameTime;
 
             // responsible for time limit
-            /*            if (_won)
-                        {
-                            _mainCharacter.WinManeuver = true;
-                            _mainCharacter.Stopped = true; // charecter stops when game ends.
-                        }
+            if (_won)
+            {
+                _mainCharacter.Stopped = true; // charecter stops when game ends.
+                _mainCharacter.WinManeuver = true;
+            }
 
-                        else if (_lost)
-                        {
-                            _mainCharacter.LossManeuver = true;
-                            _mainCharacter.Stopped = true; // charecter stops when game ends.
-                            _mainCharacter.Dead = true; // charecter dies.
+            else if (_lost)
+            {
+                _mainCharacter.Stopped = true; // charecter stops when game ends.
 
-                        }
-            */
+            }
+
 
 
 
@@ -394,7 +478,7 @@ namespace Game_Project_4.Screens
             _mainCharacter.Draw(gameTime, spriteBatch);
             foreach (Enemy enemy in _enemy)
                 enemy.Draw(gameTime, spriteBatch);
-/*            _alienEnemy.Draw(gameTime, spriteBatch);*/
+            _alienEnemy.Draw(gameTime, spriteBatch);
             _finalBoss.Draw(gameTime, spriteBatch);
             _backgroundDetails.Draw(spriteBatch);
             /*            _mainCharacter.Draw(gameTime, spriteBatch);
@@ -402,8 +486,8 @@ namespace Game_Project_4.Screens
             spriteBatch.End();
 
             spriteBatch.Begin();
-            /*            _staminaSprite.Draw(spriteBatch);
-            */
+            _staminaSprite.Draw(spriteBatch);
+
             spriteBatch.End();
             CameraSettings.transform = Matrix.CreateTranslation(offsetX, 0, 0) * CameraSettings.WaveShakeEffect(_shakeTime) * CameraSettings.DrownShakeEffect(_shakeTime, _isDrowning);
 
@@ -433,6 +517,7 @@ namespace Game_Project_4.Screens
             /*            _forestFrontLayer.Draw(spriteBatch);
             */
 
+            
 
 
             spriteBatch.End();
@@ -451,24 +536,38 @@ namespace Game_Project_4.Screens
                         {
                             spriteBatch.DrawString(spriteFont, "You win!", new Vector2(335, 195) * 1.6f, Color.White);
                         }*/
+
             int score = _killed * 500;
             if (_lost || _won)
             {
                 if (_lost)
-                spriteBatch.DrawString(spriteFont, "You're Dead!", new Vector2(310, 185) * 1.6f, Color.White);
+                    spriteBatch.DrawString(spriteFont, "You're Dead!", new Vector2(295, 204) * 1.6f, Color.White);
                 else
-                    spriteBatch.DrawString(spriteFont, "You Won!", new Vector2(330, 185) * 1.6f, Color.White);
+                    spriteBatch.DrawString(spriteFont, "You Won!", new Vector2(328, 201) * 1.6f, Color.White);
 
-                spriteBatch.DrawString(spriteFont, $"Score: {score}", new Vector2(302, 228) * 1.6f, Color.White);
-                if (!_saved)
+                /*                spriteBatch.DrawString(spriteFont, $"Score: {score}", new Vector2(302, 228) * 1.6f, Color.White);
+                */
+/*                if (!_saved)
                 {
                     DBModel.SaveList(score);
                     _saved = true;
-                }
+                }*/
             }
-            else spriteBatch.DrawString(spriteFont, $"Score: {score}", new Vector2(310, 30) * 1.6f, Color.White);
+            /*            else spriteBatch.DrawString(spriteFont, $"Score: {score}", new Vector2(310, 30) * 1.6f, Color.White);
+            */
+            if (_levelThreeTimer >= 1550 && _levelThreeTimer <= 3450)
+                spriteBatch.DrawString(spriteFont, $"Final Round", new Vector2(303, 195) * 1.6f, Color.White);
+            else if (_levelTwoTimer >= 1550 && _levelTwoTimer <= 3450)
+                spriteBatch.DrawString(spriteFont, $"Round 2", new Vector2(326, 195) * 1.6f, Color.White);
+            else if (_levelOneTimer >= 3450 && _levelOneTimer <= 5450)
 
+                spriteBatch.DrawString(spriteFont, $"Defeat All Enemies!", new Vector2(234, 205) * 1.6f, Color.White);
 
+            else if (_levelOneTimer >= 950 && _levelOneTimer <= 2950)
+            {
+                spriteBatch.DrawString(spriteFont, $"Round 1", new Vector2(327, 202) * 1.6f, Color.White);
+
+            }
             spriteBatch.End();
 
 
