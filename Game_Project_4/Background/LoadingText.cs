@@ -57,7 +57,7 @@ namespace Game_Project_4.Background
             spriteBatch.DrawString(_smallFont, "    Shoot Left,    Shot Right", new Vector2(320, 189+51 +10), Color.White);
             spriteBatch.DrawString(_smallFont, "    Move Up,    Move Down", new Vector2(320, 189 + 51+ 51 + 10), Color.White);
             spriteBatch.DrawString(_smallFont, "    Move Left,    Move Right", new Vector2(320, 189 + 51 + 51 + 51 + 10), Color.White);
-            spriteBatch.DrawString(_smallFont, "To Shoot, Press ", new Vector2(320, 189 + 51 + 51 + 51 + 51 + 10), Color.White);
+            spriteBatch.DrawString(_smallFont, " To Dash, Press ", new Vector2(320, 189 + 51 + 51 + 51 + 51 + 10), Color.White);
             spriteBatch.Draw(_spaceBarButton, new Vector2(691, 189 + 51 + 51 + 51 + 51 + 10), new Rectangle(0, 0, 202, 46), Color.White, 0, new Vector2(0, 0), (float)1, SpriteEffects.None, 0.17f);
 
 
